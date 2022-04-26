@@ -37,6 +37,7 @@ class CanvasUI {
             x: 0,
             y: 0
         };
+
         this.mousedownContainers = [];
         this.clickContainers = [];
         this.load();
@@ -44,12 +45,17 @@ class CanvasUI {
 
     private load(): void {
         window.addEventListener("resize", () => this.resize());
+        window.addEventListener("orientationchange", () => this.resize());
         this.resize();
 
         this.canvas.addEventListener("mousemove", (event) => this.movemouse(event));
-        this.canvas.addEventListener("mousedown", (event) => this.mousedown(event));
+        //this.canvas.addEventListener("mousedown", (event) => this.mousedown(event));
         this.canvas.addEventListener("mouseup", (event) => this.mouseup(event));
         this.canvas.addEventListener("click", (event) => this.click(event));
+
+        this.canvas.addEventListener("touchstart", (event) => this.mousedown(event));
+        this.canvas.addEventListener("touchend", (event) => this.mouseup(event));
+        this.canvas.addEventListener("touchcancel", (event) => this.mouseup(event));
     }
 
     /**
@@ -252,7 +258,7 @@ class CanvasUI {
      * @param event - MouseEvent from callback
      * @returns Current mouse position to match the bounds of canvas
      */
-    private mousePosition(event: MouseEvent): IPosition {
+    private mousePosition(event: MouseEvent | Touch): IPosition {
         const bounds = this.canvas.getBoundingClientRect();
         const { dpr, scale, scaleOffset } = this.dimensions;
         const x = event.pageX - bounds.left - window.scrollX;
@@ -263,7 +269,7 @@ class CanvasUI {
         }
     }
 
-    private getContainer(containers: Container[], position: IPosition): Container | null {
+    private getContainer(containers: Container[], position: IPosition): Container {
 
         // loop from the end, because we want to get the last layer of containers
         for (let i=containers.length;i--;) {
@@ -288,21 +294,44 @@ class CanvasUI {
         this.mouse.y = y;
     }
 
-    private mousedown(event: MouseEvent): void {
-        const position = this.mousePosition(event);
+    private handleMousedown(target: MouseEvent | Touch): void {
+        const position = this.mousePosition(target);
         const container = this.getContainer(this.mousedownContainers, position);
         if (!container) return;
         container.holding = true;
+
+        if (target instanceof Touch) {
+            container.touchIdentifier = target.identifier;
+        }
         if (container.mousedown.remove) this.remove(container);
     }
 
-    private mouseup(event: MouseEvent): void {
+    private mousedown(event: MouseEvent | TouchEvent): void {
+        if (event instanceof MouseEvent) {
+            this.handleMousedown(event);
+        } else if (event instanceof TouchEvent) {
+            for (const touch of event.changedTouches) {
+                this.handleMousedown(touch);
+            }
+        }
+    }
+
+    private mouseup(event: MouseEvent | TouchEvent): void {
         for (const container of this.mousedownContainers) {
-            container.holding = false;
+            if (event instanceof TouchEvent) {
+                for (const touch of event.changedTouches) {
+                    if (container.touchIdentifier === touch.identifier || typeof touch.identifier !== "number") {
+                        container.holding = false;
+                    }
+                }
+            } else {
+                container.holding = false;
+            }
         }
     }
 
     private click(event: MouseEvent): void {
+        event.preventDefault();
         const position = this.mousePosition(event);
         const container = this.getContainer(this.clickContainers, position);
         if (!container) return;

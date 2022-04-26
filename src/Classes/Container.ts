@@ -35,6 +35,8 @@ class Container {
         height: number
     }
 
+    touchIdentifier: number
+
     constructor(renderer: Renderer) {
         this.id = id++;
         this.containers = [];
@@ -69,6 +71,8 @@ class Container {
             width: this.width,
             height: this.height
         };
+
+        this.touchIdentifier = null;
     }
 
     /**
@@ -141,19 +145,19 @@ class Container {
         return this.oldStyles;
     }
 
-    textMode(content: string): string | number {
-        if (content === "ID") return this.id;
+    textMode(content: string): string {
+        if (content === "ID") return this.id.toString();
         return content;
     }
 
     /**
      * Returns current text position relative to the container
      */
-    private textPosition(text: IText): IPosition {
+    private textPosition(text: IText, content: string): IPosition {
         if (!text.position) return { x: this.position.x1, y: this.position.y1 };
 
         const { x1, y1, x2, y2, width, height } = this.position;
-        const metrics = textMetrics(UI.ctx, text.content);
+        const metrics = textMetrics(UI.ctx, content);
         const { horizontal, vertical } = text.position;
         const textPos: IPosition = {
             x: 0,
@@ -217,16 +221,17 @@ class Container {
 
         if (styles.text && styles.text.content) {
             
-            const { x, y } = this.textPosition(styles.text);
+            const content = this.textMode(styles.text.content);
+            const { x, y } = this.textPosition(styles.text, content);
             UI.ctx.font = styles.text.font || "";
             if (styles.text.fill) {
                 UI.ctx.fillStyle = styles.text.fill;
-                UI.ctx.fillText(styles.text.content, x, y);
+                UI.ctx.fillText(content, x, y);
             }
 
             if (styles.text.stroke) {
                 UI.ctx.strokeStyle = styles.text.stroke;
-                UI.ctx.strokeText(styles.text.content, x, y);
+                UI.ctx.strokeText(content, x, y);
             }
         }
 

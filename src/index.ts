@@ -46,20 +46,31 @@ function generateContainer() {
                 cursor: "pointer"
             }
         },
+        mousedown: {
+            styles: {
+                darken: 0.1
+            }
+        },
         click: {
-            remove: true
+            remove: true,
         }
     })
 }
 
 parent1.add(generateContainer());
 parent1.add(generateContainer());
+parent1.add(generateContainer());
 
 document.oncontextmenu = function(e) {
     e.preventDefault();
 }
+
 window.addEventListener("mouseup", function(e) {
     if (e.button === 2) parent1.add(generateContainer());
+})
+
+window.addEventListener("touchstart", function(e) {
+    parent1.add(generateContainer());
 })
 
 UI.add(parent1);
