@@ -4,10 +4,8 @@ import "./styles/styles.css";
 
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 export const UI = new CanvasUI(canvas);
-const upgradeList: object[] = [];
 
 const parent1 = new Container({
-    linkedWith: () => upgradeList,
     styles: {
         align: "horizontal",
         position: {
@@ -23,64 +21,6 @@ const parent1 = new Container({
     }
 })
 
-// const container1 = new Container({
-//     width: 200,
-//     height: 200,
-//     styles: {
-//         fill: "#ff7640",
-//     },
-//     hover: {
-//         styles: {
-//             cursor: "pointer"
-//         }
-//     },
-//     mousedown: {
-//         styles: {
-//             darken: 0.1
-//         }
-//     }
-// })
-
-// const container2 = new Container({
-//     width: 200,
-//     height: 200,
-//     styles: {
-//         fill: "#40b6ff",
-//     },
-//     hover: {
-//         styles: {
-//             cursor: "pointer"
-//         }
-//     },
-//     mousedown: {
-//         styles: {
-//             darken: 0.1
-//         }
-//     }
-// })
-
-// const container3 = new Container({
-//     width: 200,
-//     height: 200,
-//     styles: {
-//         fill: "#ff4086",
-//     },
-//     hover: {
-//         // styles: {
-//         //     cursor: "pointer"
-//         // }
-//     },
-//     mousedown: {
-//         // styles: {
-//         //     darken: 0.1
-//         // }
-//     }
-// })
-
-// parent1.add(container1);
-// parent1.add(container2);
-// parent1.add(container3);
-
 function generateContainer() {
     return new Container({
         width: 200,
@@ -90,19 +30,20 @@ function generateContainer() {
             stroke: "#000",
 
             text: {
-                content: "1",
+                content: "ID",
                 font: "bold 40px Arial",
                 fill: "white",
-                stroke: "#000"
+                stroke: "#000",
+        
+                position: {
+                    horizontal: "middle",
+                    vertical: "middle"
+                }
             }
         },
         hover: {
             styles: {
-                cursor: "pointer",
-
-                text: {
-                    content: "HOVERING"
-                }
+                cursor: "pointer"
             }
         },
         click: {
@@ -111,6 +52,7 @@ function generateContainer() {
     })
 }
 
+parent1.add(generateContainer());
 parent1.add(generateContainer());
 
 document.oncontextmenu = function(e) {

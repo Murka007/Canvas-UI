@@ -1,4 +1,4 @@
-import { IDimensions, IPosition } from "../../types"
+import { IDimensions, IPosition } from "../types"
 import Container from "./Container"
 
 class CanvasUI {
@@ -293,6 +293,7 @@ class CanvasUI {
         const container = this.getContainer(this.mousedownContainers, position);
         if (!container) return;
         container.holding = true;
+        if (container.mousedown.remove) this.remove(container);
     }
 
     private mouseup(event: MouseEvent): void {

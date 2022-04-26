@@ -1,4 +1,20 @@
-type BoxInclude = true | false
+import Container from "./Classes/Container"
+
+type Horizontal = "left" | "middle" | "right"
+type Vertical = "top" | "middle" | "bottom"
+
+export interface ITextPosition {
+    horizontal?: Horizontal
+    vertical?: Vertical
+}
+
+export interface IText {
+    content: string
+    font?: string
+    fill?: string
+    stroke?: string
+    position?: ITextPosition
+}
 
 export interface IStyles {
 
@@ -29,12 +45,7 @@ export interface IStyles {
     darken?: number
     cursor?: "pointer"
 
-    text?: {
-        content: string
-        font?: string
-        fill?: string
-        stroke?: string
-    }
+    text?: IText
 
     /**
      * Configure in which position of the canvas containers will be displayed
@@ -45,24 +56,24 @@ export interface IStyles {
          * Horizontal alignment of the container
          */
         horizontal?: {
-            align: "left" | "middle" | "right"
+            align: Horizontal
 
             /**
              * Position will start from the center of the container
              */
-            includeBox: BoxInclude
+            includeBox: boolean
         }
 
         /**
          * Vertical alignment of the container
          */
         vertical?: {
-            align: "top" | "middle" | "bottom"
+            align: Vertical
 
             /**
              * Position will start from the center of the container
              */
-            includeBox: BoxInclude
+            includeBox: boolean
         }
     }
 }
@@ -116,8 +127,6 @@ export interface Renderer {
      * Used to handle onclick event, you can add certain actions that will be applied when event is fired
      */
     click?: IEvent
-
-    linkedWith?: () => object[]
 }
 
 export interface IDimensions {
@@ -139,3 +148,7 @@ export interface IDimensions {
 }
 
 export type IPosition = { x: number, y: number }
+
+export interface IMerge {
+    [key: string]: any
+}
