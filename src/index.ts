@@ -7,7 +7,9 @@ export const UI = new CanvasUI(canvas);
 
 const parent1 = new Container({
     styles: {
-        align: "vertical",
+        align: "horizontal",
+        strokeWidth: 5,
+        stroke: "orange",
         position: {
             horizontal: {
                 align: "middle",
@@ -28,6 +30,9 @@ function generateContainer() {
         styles: {
             fill: "#ff4086",
             stroke: "#000",
+            marginRight: 50,
+            marginBottom: 50,
+            opacity: 0.1,
 
             text: {
                 content: "ID",
@@ -57,7 +62,7 @@ function generateContainer() {
             }
         },
         click: {
-            //remove: true,
+            remove: true,
             callback(container) {
                 console.log(container);
             }

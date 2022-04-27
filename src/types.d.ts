@@ -45,6 +45,8 @@ export interface IStyles {
      */
     darken?: number
     cursor?: "pointer"
+    marginRight?: number
+    marginBottom?: number
 
     text?: IText
 

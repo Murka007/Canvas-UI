@@ -35,6 +35,11 @@ class Container {
         height: number
     }
 
+    readonly total: {
+        marginRight: number
+        marginBottom: number
+    }
+
     touchIdentifier: number
 
     constructor(renderer: Renderer) {
@@ -70,6 +75,11 @@ class Container {
         this.initial = {
             width: this.width,
             height: this.height
+        };
+
+        this.total = {
+            marginRight: 0,
+            marginBottom: 0
         };
 
         this.touchIdentifier = null;

@@ -113,11 +113,27 @@ class CanvasUI {
         return this.dimensions;
     }
 
+    private setMargins(parent: Container) {
+        const styles = parent.styles;
+        const isHor = styles.align !== "vertical" || !styles.align;
+        const isVert = styles.align === "vertical";
+
+        parent.total.marginRight = 0;
+        parent.total.marginBottom = 0;
+        for (let i=0;i<parent.containers.length;i++) {
+            const container = parent.containers[i];
+            const { marginRight, marginBottom } = container.styles;
+            if (isHor && marginRight) parent.total.marginRight += marginRight;
+            if (isVert && marginBottom) parent.total.marginBottom += marginBottom;
+        }
+    }
+
     private calculateBox(parent: Container): void {
         const styles = parent.styles;
         const isHor = styles.align !== "vertical" || !styles.align;
         const isVert = styles.align === "vertical";
 
+        this.setMargins(parent);
         for (const current of parent.containers) {
             if (isHor) {
                 parent.width += current.width;
@@ -131,10 +147,24 @@ class CanvasUI {
                 parent.height = current.height;
             }
         }
+
+        if (!parent.containers.length) return;
+
+        const { marginRight, marginBottom } = parent.total;
+        if (isHor) parent.width += marginRight * 2;
+        if (isVert) parent.height += marginBottom * 2;
     }
 
+    /**
+     * Calculates the initial position of the parent, including margins of the children
+     */
     private calculatePosition(parent: Container): void {
-        const position = parent.styles.position;
+        const styles = parent.styles;
+        const isHor = styles.align !== "vertical" || !styles.align;
+        const isVert = styles.align === "vertical";
+        const { marginRight, marginBottom } = parent.total;
+
+        const position = styles.position;
         const { width, height } = this.dimensions;
 
         const horizontal = position.horizontal.align;
@@ -199,6 +229,10 @@ class CanvasUI {
             // Horizontal and vertical alignment, horizontal by default
             current.x2 = current.x1 + (isHor ? current.width : 0);
             current.y2 = current.y1 + (isVert ? current.height : 0);
+
+            const { marginRight, marginBottom } = parent.total;
+            if (isHor) current.x2 += marginRight;
+            if (isVert) current.y2 += marginBottom;
         }
     }
 
