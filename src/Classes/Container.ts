@@ -230,6 +230,7 @@ class Container {
             }
 
             if (styles.text.stroke) {
+                UI.ctx.lineWidth = styles.text.strokeWidth || 1;
                 UI.ctx.strokeStyle = styles.text.stroke;
                 UI.ctx.strokeText(content, x, y);
             }

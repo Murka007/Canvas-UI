@@ -47,9 +47,9 @@ const commonConfig = {
     devServer: {
         port: 3000,
         hot: true,
-        // static: {
-        //     directory: "./src/styles"
-        // }
+        static: {
+            directory: "./src/styles"
+        }
     },
     optimization: {
         usedExports: true,

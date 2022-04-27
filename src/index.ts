@@ -7,7 +7,7 @@ export const UI = new CanvasUI(canvas);
 
 const parent1 = new Container({
     styles: {
-        align: "horizontal",
+        align: "vertical",
         position: {
             horizontal: {
                 align: "middle",
@@ -33,6 +33,7 @@ function generateContainer() {
                 content: "ID",
                 font: "bold 40px Arial",
                 fill: "white",
+                strokeWidth: 2,
                 stroke: "#000",
         
                 position: {
@@ -48,11 +49,18 @@ function generateContainer() {
         },
         mousedown: {
             styles: {
-                darken: 0.1
+                darken: 0.1,
+                text: {
+                    content: "ID",
+                    fill: "red"
+                }
             }
         },
         click: {
-            remove: true,
+            //remove: true,
+            callback(container) {
+                console.log(container);
+            }
         }
     })
 }
@@ -69,9 +77,9 @@ window.addEventListener("mouseup", function(e) {
     if (e.button === 2) parent1.add(generateContainer());
 })
 
-window.addEventListener("touchstart", function(e) {
-    parent1.add(generateContainer());
-})
+// window.addEventListener("touchstart", function(e) {
+//     parent1.add(generateContainer());
+// })
 
 UI.add(parent1);
 console.log(UI);

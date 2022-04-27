@@ -19,7 +19,6 @@ class CanvasUI {
     }
 
     private readonly mousedownContainers: Container[]
-    private readonly clickContainers: Container[]
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -39,7 +38,6 @@ class CanvasUI {
         };
 
         this.mousedownContainers = [];
-        this.clickContainers = [];
         this.load();
     }
 
@@ -49,10 +47,10 @@ class CanvasUI {
         this.resize();
 
         this.canvas.addEventListener("mousemove", (event) => this.movemouse(event));
-        //this.canvas.addEventListener("mousedown", (event) => this.mousedown(event));
+        this.canvas.addEventListener("mousedown", (event) => this.mousedown(event));
         this.canvas.addEventListener("mouseup", (event) => this.mouseup(event));
-        this.canvas.addEventListener("click", (event) => this.click(event));
 
+        // Mobile support
         this.canvas.addEventListener("touchstart", (event) => this.mousedown(event));
         this.canvas.addEventListener("touchend", (event) => this.mouseup(event));
         this.canvas.addEventListener("touchcancel", (event) => this.mouseup(event));
@@ -68,8 +66,11 @@ class CanvasUI {
         this.resize();
     }
 
+    /**
+     * Remove the unnecessary container
+     */
     remove(container: Container): void {
-        const lists = [container.parent.containers, this.mousedownContainers, this.clickContainers];
+        const lists = [container.parent.containers, this.mousedownContainers];
 
         for (const list of lists) {
             const index = list.indexOf(container);
@@ -80,7 +81,6 @@ class CanvasUI {
 
     addListeners(container: Container): void {
         if (container.mousedown) this.mousedownContainers.push(container);
-        if (container.click) this.clickContainers.push(container);
     }
 
     private canvasDimensions(): IDimensions {
@@ -304,8 +304,25 @@ class CanvasUI {
             container.touchIdentifier = target.identifier;
         }
         if (container.mousedown.remove) this.remove(container);
+        const callback = container.mousedown.callback;
+        if (typeof callback === "function") callback(container);
     }
 
+    private handleClick(target: MouseEvent | Touch, container: Container): void {
+        if (!(container.click && container.holding)) return;
+
+        const position = this.mousePosition(target);
+        if (!this.overlaps(container, position)) return;
+
+        container.clicked = !container.clicked;
+        if (container.click.remove) this.remove(container);
+        const callback = container.click.callback;
+        if (typeof callback === "function") callback(container);
+    }
+
+    /**
+     * Handle mousedown events
+     */
     private mousedown(event: MouseEvent | TouchEvent): void {
         if (event instanceof MouseEvent) {
             this.handleMousedown(event);
@@ -316,28 +333,23 @@ class CanvasUI {
         }
     }
 
+    /**
+     * Handle onclick events and remove onmousedown events
+     */
     private mouseup(event: MouseEvent | TouchEvent): void {
         for (const container of this.mousedownContainers) {
             if (event instanceof TouchEvent) {
                 for (const touch of event.changedTouches) {
                     if (container.touchIdentifier === touch.identifier || typeof touch.identifier !== "number") {
+                        this.handleClick(touch, container);
                         container.holding = false;
                     }
                 }
             } else {
+                this.handleClick(event, container);
                 container.holding = false;
             }
         }
-    }
-
-    private click(event: MouseEvent): void {
-        event.preventDefault();
-        const position = this.mousePosition(event);
-        const container = this.getContainer(this.clickContainers, position);
-        if (!container) return;
-        container.clicked = !container.clicked;
-
-        if (container.click.remove) this.remove(container);
     }
 
     /**

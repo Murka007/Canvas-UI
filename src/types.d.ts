@@ -12,6 +12,7 @@ export interface IText {
     content: string
     font?: string
     fill?: string
+    strokeWidth?: number
     stroke?: string
     position?: ITextPosition
 }
@@ -84,6 +85,7 @@ export interface IEvent {
      */
     styles?: IStyles
     remove?: boolean
+    callback?: (container: Container) => void
 }
 
 export interface Renderer {
@@ -121,8 +123,8 @@ export interface Renderer {
     /**
      * Used to handle onmousedown event, you can add certain actions that will be applied when event is fired
      */
-
     mousedown?: IEvent
+
     /**
      * Used to handle onclick event, you can add certain actions that will be applied when event is fired
      */
