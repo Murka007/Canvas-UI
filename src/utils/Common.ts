@@ -42,3 +42,7 @@ export function textMetrics(ctx: CanvasRenderingContext2D, text: string): { widt
         height: getFontHeight(ctx.font)
     }
 }
+
+export function isNumber(value: any): boolean {
+    return typeof value === "number";
+}

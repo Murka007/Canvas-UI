@@ -6,6 +6,7 @@ const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 export const UI = new CanvasUI(canvas);
 
 const parent1 = new Container({
+    offsetY: -10,
     styles: {
         align: "horizontal",
         strokeWidth: 5,
@@ -16,7 +17,7 @@ const parent1 = new Container({
                 includeBox: true
             },
             vertical: {
-                align: "middle",
+                align: "bottom",
                 includeBox: true
             }
         }
@@ -49,14 +50,17 @@ function generateContainer() {
         },
         hover: {
             styles: {
-                cursor: "pointer"
+                cursor: "pointer",
+                text: {
+                    content: "Hovering"
+                }
             }
         },
         mousedown: {
             styles: {
                 darken: 0.1,
                 text: {
-                    content: "ID",
+                    content: "Hovering",
                     fill: "red"
                 }
             }

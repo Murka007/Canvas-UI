@@ -9,7 +9,7 @@ export interface ITextPosition {
 }
 
 export interface IText {
-    content: string
+    content?: string
     font?: string
     fill?: string
     strokeWidth?: number
@@ -82,16 +82,27 @@ export interface IStyles {
 }
 
 export interface IEvent {
+
     /**
      * Styles that will be used on event
      */
     styles?: IStyles
+
+    /**
+     * Will this container be removed when event is fired
+     */
     remove?: boolean
+
+    /**
+     * Callback when event is fired
+     */
     callback?: (container: Container) => void
 }
 
 export interface Renderer {
 
+    offsetX?: number
+    offsetY?: number
     /**
      * The initial x position of the container, will be ignored if styles.position.horizontal property is added
      */

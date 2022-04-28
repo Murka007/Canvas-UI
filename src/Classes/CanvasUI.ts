@@ -1,4 +1,5 @@
 import { IDimensions, IPosition } from "../types"
+import { isNumber } from "../utils/Common"
 import Container from "./Container"
 
 class CanvasUI {
@@ -113,27 +114,31 @@ class CanvasUI {
         return this.dimensions;
     }
 
-    private setMargins(parent: Container) {
+    /**
+     * Adds an external width and height from children margins
+     */
+    private parentMargins(parent: Container): void {
+        if (!parent.containers.length) return;
         const styles = parent.styles;
         const isHor = styles.align !== "vertical" || !styles.align;
         const isVert = styles.align === "vertical";
 
-        parent.total.marginRight = 0;
-        parent.total.marginBottom = 0;
-        for (let i=0;i<parent.containers.length;i++) {
+        for (let i=0;i<parent.containers.length-1;i++) {
             const container = parent.containers[i];
             const { marginRight, marginBottom } = container.styles;
-            if (isHor && marginRight) parent.total.marginRight += marginRight;
-            if (isVert && marginBottom) parent.total.marginBottom += marginBottom;
+            if (isHor && marginRight) parent.width += marginRight;
+            if (isVert && marginBottom) parent.height += marginBottom;
         }
     }
 
+    /**
+     * Calculates width and height of the parent, margins of the children are included
+     */
     private calculateBox(parent: Container): void {
         const styles = parent.styles;
         const isHor = styles.align !== "vertical" || !styles.align;
         const isVert = styles.align === "vertical";
 
-        this.setMargins(parent);
         for (const current of parent.containers) {
             if (isHor) {
                 parent.width += current.width;
@@ -147,29 +152,18 @@ class CanvasUI {
                 parent.height = current.height;
             }
         }
-
-        if (!parent.containers.length) return;
-
-        const { marginRight, marginBottom } = parent.total;
-        if (isHor) parent.width += marginRight * 2;
-        if (isVert) parent.height += marginBottom * 2;
+        this.parentMargins(parent);
     }
 
     /**
      * Calculates the initial position of the parent, including margins of the children
      */
     private calculatePosition(parent: Container): void {
-        const styles = parent.styles;
-        const isHor = styles.align !== "vertical" || !styles.align;
-        const isVert = styles.align === "vertical";
-        const { marginRight, marginBottom } = parent.total;
-
-        const position = styles.position;
+        const position = parent.styles.position;
         const { width, height } = this.dimensions;
 
         const horizontal = position.horizontal.align;
         const includeHor = position.horizontal.includeBox;
-
         switch (horizontal) {
             case "left":
                 parent.x1 = 0;
@@ -187,7 +181,6 @@ class CanvasUI {
 
         const vertical = position.vertical.align;
         const includeVert = position.vertical.includeBox;
-
         switch (vertical) {
             case "top":
                 parent.y1 = 0;
@@ -200,6 +193,14 @@ class CanvasUI {
                 break;
             default:
                 parent.y1 = 0;
+        }
+
+        if (isNumber(parent.offsetX)) {
+            parent.x1 += parent.offsetX;
+        }
+
+        if (isNumber(parent.offsetY)) {
+            parent.y1 += parent.offsetY;
         }
     }
 
@@ -230,9 +231,10 @@ class CanvasUI {
             current.x2 = current.x1 + (isHor ? current.width : 0);
             current.y2 = current.y1 + (isVert ? current.height : 0);
 
-            const { marginRight, marginBottom } = parent.total;
-            if (isHor) current.x2 += marginRight;
-            if (isVert) current.y2 += marginBottom;
+            // Include margins to the next container position
+            const { marginRight, marginBottom } = current.styles;
+            if (isHor && marginRight) current.x2 += marginRight;
+            if (isVert && marginBottom) current.y2 += marginBottom;
         }
     }
 

@@ -9,6 +9,8 @@ class Container {
     readonly styles: IStyles
     oldStyles: IStyles
 
+    offsetX: number
+    offsetY: number
     x1: number
     y1: number
     x2: number
@@ -35,11 +37,6 @@ class Container {
         height: number
     }
 
-    readonly total: {
-        marginRight: number
-        marginBottom: number
-    }
-
     touchIdentifier: number
 
     constructor(renderer: Renderer) {
@@ -47,6 +44,8 @@ class Container {
         this.containers = [];
         this.styles = {};
 
+        this.offsetX = 0;
+        this.offsetY = 0;
         this.x1 = 0;
         this.y1 = 0;
         this.x2 = 0;
@@ -75,11 +74,6 @@ class Container {
         this.initial = {
             width: this.width,
             height: this.height
-        };
-
-        this.total = {
-            marginRight: 0,
-            marginBottom: 0
         };
 
         this.touchIdentifier = null;
