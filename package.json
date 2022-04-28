@@ -1,7 +1,7 @@
 {
   "name": "canvas-ui",
   "version": "1.0.0",
-  "description": "Typescript library that allows to build UI on canvas",
+  "description": "Typescript library that allows to build user interfaces on canvas",
   "main": "index.js",
   "scripts": {
     "dev": "webpack --config webpack.dev.js",
