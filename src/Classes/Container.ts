@@ -94,8 +94,7 @@ class Container {
     }
 
     /**
-     * Use it to add a new container
-     * @param {Container} container - A parent or children that will be drawn 
+     * Adds a new container to the array
      */
     add(container: Container): void {
         container.parent = this;
@@ -106,8 +105,7 @@ class Container {
     }
 
     /**
-     * Fills the container with cirtain color
-     * @param {string} color - A color of the fill color 
+     * Fills the container with certain color
      */
     private fill(color: string): void {
         UI.ctx.fillStyle = color;
@@ -115,7 +113,7 @@ class Container {
     }
 
     /**
-     * Draws the stroke of the container
+     * Draws a stroke of the container
      * @param {string} color - Color of the stroke 
      * @param strokeWidth - Width of the stroke, default width is 1
      */
@@ -200,6 +198,9 @@ class Container {
         return textPos;
     }
 
+    /**
+     * Used to render current container, all added styles will be applied
+     */
     render(): void {
 
         this.hovering = UI.overlaps(this);
@@ -244,6 +245,7 @@ class Container {
             UI.canvas.style.cursor = "pointer";
         }
 
+        // Recursively render all containers
         for (const container of this.containers) {
             container.render();
         }

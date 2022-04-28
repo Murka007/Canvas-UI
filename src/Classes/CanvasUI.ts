@@ -58,8 +58,7 @@ class CanvasUI {
     }
 
     /**
-     * Use it to create parent containers, that will hold other children
-     * @param container - Parent container that holds all chidren
+     * Adds a new parent to the array
      */
     add(container: Container): void {
         this.containers.push(container);
@@ -68,7 +67,7 @@ class CanvasUI {
     }
 
     /**
-     * Remove the unnecessary container
+     * Removes the unnecessary container
      */
     remove(container: Container): void {
         const lists = [container.parent.containers, this.mousedownContainers];
@@ -123,7 +122,9 @@ class CanvasUI {
         const isHor = styles.align !== "vertical" || !styles.align;
         const isVert = styles.align === "vertical";
 
-        for (let i=0;i<parent.containers.length-1;i++) {
+        // Do not include the last margin of the container
+        const len = parent.containers.length - 1;
+        for (let i=0;i<len;i++) {
             const container = parent.containers[i];
             const { marginRight, marginBottom } = container.styles;
             if (isHor && marginRight) parent.width += marginRight;
@@ -156,7 +157,7 @@ class CanvasUI {
     }
 
     /**
-     * Calculates the initial position of the parent, including margins of the children
+     * Calculates the initial position of the parent
      */
     private calculatePosition(parent: Container): void {
         const position = parent.styles.position;
@@ -195,15 +196,13 @@ class CanvasUI {
                 parent.y1 = 0;
         }
 
-        if (isNumber(parent.offsetX)) {
-            parent.x1 += parent.offsetX;
-        }
-
-        if (isNumber(parent.offsetY)) {
-            parent.y1 += parent.offsetY;
-        }
+        if (isNumber(parent.offsetX)) parent.x1 += parent.offsetX;
+        if (isNumber(parent.offsetY)) parent.y1 += parent.offsetY;
     }
 
+    /**
+     * Calculated alignment of the parent's children
+     */
     private calculateAlignment(parent: Container): void {
         const styles = parent.styles;
         const isHor = styles.align !== "vertical" || !styles.align;
@@ -238,6 +237,9 @@ class CanvasUI {
         }
     }
 
+    /**
+     * Update position of all containers, all options will be applied to the containers
+     */
     private updatePosition(containers: Container[]): void {
 
         for (const parent of containers) {
@@ -257,7 +259,7 @@ class CanvasUI {
     }
 
     /**
-     * Use it to handle canvas resizing, put it in the callback
+     * Used to handle canvas resizing, put it in the callback
      * ```
      * window.addEventListener("resize", () => UI.resize());
      * ```
@@ -275,7 +277,6 @@ class CanvasUI {
 
     /**
      * Checks whether the mouse cursor is in the container
-     * @param container
      * @param position Current mouse position from fired event
      */
     overlaps(container: Container, position?: IPosition): boolean {
@@ -290,9 +291,7 @@ class CanvasUI {
     }
 
     /**
-     * 
-     * @param event - MouseEvent from callback
-     * @returns Current mouse position to match the bounds of canvas
+     * @returns Current mouse position to match the canvas
      */
     private mousePosition(event: MouseEvent | Touch): IPosition {
         const bounds = this.canvas.getBoundingClientRect();
@@ -305,6 +304,9 @@ class CanvasUI {
         }
     }
 
+    /**
+     * Returns the container that is under mouse cursor
+     */
     private getContainer(containers: Container[], position: IPosition): Container {
 
         // loop from the end, because we want to get the last layer of containers
@@ -318,11 +320,10 @@ class CanvasUI {
     }
 
     /**
-     * Use it to handle mouse movements on the canvas, put it in the callback
+     * Used to handle mouse movements on the canvas, put it in the callback
      * ```
      * window.addEventListener("mousemove", (event) => UI.mousemove(event));
      * ```
-     * @param {MouseEvent} event - MouseEvent from callback
      */
     private movemouse(event: MouseEvent): void {
         const { x, y } = this.mousePosition(event);
@@ -357,7 +358,7 @@ class CanvasUI {
     }
 
     /**
-     * Handle mousedown events
+     * Used to handle mousedown and touchstart events
      */
     private mousedown(event: MouseEvent | TouchEvent): void {
         if (event instanceof MouseEvent) {
@@ -370,13 +371,15 @@ class CanvasUI {
     }
 
     /**
-     * Handle onclick events and remove onmousedown events
+     * Used to handle mouseup, touchend and touchcancel events
+     * 
+     * It is also an alternative to onclick event
      */
     private mouseup(event: MouseEvent | TouchEvent): void {
         for (const container of this.mousedownContainers) {
             if (event instanceof TouchEvent) {
                 for (const touch of event.changedTouches) {
-                    if (container.touchIdentifier === touch.identifier || typeof touch.identifier !== "number") {
+                    if (container.touchIdentifier === touch.identifier || !isNumber(touch.identifier)) {
                         this.handleClick(touch, container);
                         container.holding = false;
                     }
@@ -389,7 +392,7 @@ class CanvasUI {
     }
 
     /**
-     * The first rendering method, call it in the rendering loop
+     * Used to render all existing containers
      */
     render(): void {
         this.canvas.style.cursor = "";

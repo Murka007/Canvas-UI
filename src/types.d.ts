@@ -4,16 +4,48 @@ type Horizontal = "left" | "middle" | "right"
 type Vertical = "top" | "middle" | "bottom"
 
 export interface ITextPosition {
+
+    /**
+     * Horizontal alignment of the text
+     */
     horizontal?: Horizontal
+
+    /**
+     * Vertical alignment of the text
+     */
     vertical?: Vertical
 }
 
 export interface IText {
+
+    /**
+     * The text that will be drawn and to which effects will be applied
+     */
     content?: string
+
+    /**
+     * The same property as CanvasRenderingContext2D.prototype.font
+     */
     font?: string
+
+    /**
+     * Color of the text
+     */
     fill?: string
-    strokeWidth?: number
+
+    /**
+     * Color of the stroke
+     */
     stroke?: string
+
+    /**
+     * Width of the stroke
+     */
+    strokeWidth?: number
+
+    /**
+     * Configure in which position of the container text will be displayed
+     */
     position?: ITextPosition
 }
 
@@ -33,7 +65,15 @@ export interface IStyles {
      * The color that will be used to draw a stroke of the container
      */
     stroke?: string
+
+    /**
+     * Width of the stroke, default is 1
+     */
     strokeWidth?: number
+
+    /**
+     * Opacity of the container
+     */
     opacity?: number
 
     /**
@@ -48,6 +88,9 @@ export interface IStyles {
     marginRight?: number
     marginBottom?: number
 
+    /**
+     * Manage text of the container, add fill and stroke colors, adjust the position of the text relative to the container
+     */
     text?: IText
 
     /**
@@ -89,7 +132,7 @@ export interface IEvent {
     styles?: IStyles
 
     /**
-     * Will this container be removed when event is fired
+     * Container be removed when event is fired
      */
     remove?: boolean
 
@@ -101,8 +144,16 @@ export interface IEvent {
 
 export interface Renderer {
 
+    /**
+     * The horizontal offset that will be applied after positioning the container
+     */
     offsetX?: number
+
+    /**
+     * The vertical offset that will be applied after positioning the container
+     */
     offsetY?: number
+
     /**
      * The initial x position of the container, will be ignored if styles.position.horizontal property is added
      */
@@ -145,8 +196,8 @@ export interface Renderer {
 }
 
 export interface IDimensions {
-    initialWidth?: number,
-    initialHeight?: number,
+    initialWidth?: number
+    initialHeight?: number
     dpr?: number
 
     canvasWidth?: number
