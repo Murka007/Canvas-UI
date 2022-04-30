@@ -1,5 +1,5 @@
 /node_modules
 /public
 /styles
-.index.html
-.index.ts
+index.html
+index.ts
