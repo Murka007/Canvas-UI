@@ -1,13 +1,19 @@
-import { UI } from "..";
 import { IEvent, IPosition, IStyles, IText, Renderer } from "../types";
 import { deepCopy, merge, textMetrics } from "../utils/Common";
+import CanvasUI from "./CanvasUI";
 
 let id = 0;
+
+/**
+ * Used to manipulate with the container, render it and calculate position
+ * @class Container
+ */
 class Container {
     readonly id: number
     readonly containers: Container[]
     readonly styles: IStyles
     oldStyles: IStyles
+    init: CanvasUI
 
     offsetX: number
     offsetY: number
@@ -43,6 +49,7 @@ class Container {
         this.id = id++;
         this.containers = [];
         this.styles = {};
+        this.init = null;
 
         this.offsetX = 0;
         this.offsetY = 0;
@@ -98,18 +105,19 @@ class Container {
      */
     add(container: Container): void {
         container.parent = this;
+        container.init = this.init;
         
         this.containers.push(container);
-        UI.addListeners(container);
-        UI.resize();
+        this.init.addListeners(container);
+        this.init.resize();
     }
 
     /**
      * Fills the container with certain color
      */
     private fill(color: string): void {
-        UI.ctx.fillStyle = color;
-        UI.ctx.fillRect(this.x1, this.y1, this.width, this.height);
+        this.init.ctx.fillStyle = color;
+        this.init.ctx.fillRect(this.x1, this.y1, this.width, this.height);
     }
 
     /**
@@ -122,9 +130,9 @@ class Container {
         const y = this.y1 + strokeWidth / 2;
         const w = this.width - strokeWidth;
         const h = this.height - strokeWidth;
-        UI.ctx.strokeStyle = color;
-        UI.ctx.lineWidth = strokeWidth;
-        UI.ctx.strokeRect(x, y, w, h);
+        this.init.ctx.strokeStyle = color;
+        this.init.ctx.lineWidth = strokeWidth;
+        this.init.ctx.strokeRect(x, y, w, h);
     }
 
     /**
@@ -159,7 +167,7 @@ class Container {
         if (!text.position) return { x: this.position.x1, y: this.position.y1 };
 
         const { x1, y1, x2, y2, width, height } = this.position;
-        const metrics = textMetrics(UI.ctx, content);
+        const metrics = textMetrics(this.init.ctx, content);
         const { horizontal, vertical } = text.position;
         const textPos: IPosition = {
             x: 0,
@@ -203,46 +211,46 @@ class Container {
      */
     render(): void {
 
-        this.hovering = UI.overlaps(this);
+        this.hovering = this.init.overlaps(this);
 
         if (this.hovering && this.hover && this.hover.remove) {
-            UI.remove(this);
+            this.init.remove(this);
         }
         const styles = this.createStyles();
 
-        UI.ctx.save();
+        this.init.ctx.save();
         if (typeof styles.opacity === "number") {
-            UI.ctx.globalAlpha = styles.opacity;
+            this.init.ctx.globalAlpha = styles.opacity;
         }
 
         if (styles.fill) this.fill(styles.fill);
         if (styles.stroke) this.stroke(styles.stroke, styles.strokeWidth);
 
         if (styles.darken) {
-            UI.ctx.globalAlpha = styles.darken;
+            this.init.ctx.globalAlpha = styles.darken;
             this.fill("black");
         }
-        UI.ctx.restore();
+        this.init.ctx.restore();
 
         if (styles.text && styles.text.content) {
             
             const content = this.textMode(styles.text.content);
             const { x, y } = this.textPosition(styles.text, content);
-            UI.ctx.font = styles.text.font || "";
+            this.init.ctx.font = styles.text.font || "";
             if (styles.text.fill) {
-                UI.ctx.fillStyle = styles.text.fill;
-                UI.ctx.fillText(content, x, y);
+                this.init.ctx.fillStyle = styles.text.fill;
+                this.init.ctx.fillText(content, x, y);
             }
 
             if (styles.text.stroke) {
-                UI.ctx.lineWidth = styles.text.strokeWidth || 1;
-                UI.ctx.strokeStyle = styles.text.stroke;
-                UI.ctx.strokeText(content, x, y);
+                this.init.ctx.lineWidth = styles.text.strokeWidth || 1;
+                this.init.ctx.strokeStyle = styles.text.stroke;
+                this.init.ctx.strokeText(content, x, y);
             }
         }
 
         if ((this.hovering || this.holding) && styles.cursor === "pointer") {
-            UI.canvas.style.cursor = "pointer";
+            this.init.canvas.style.cursor = "pointer";
         }
 
         // Recursively render all containers

@@ -2,6 +2,10 @@ import { IDimensions, IPosition } from "../types"
 import { isNumber } from "../utils/Common"
 import Container from "./Container"
 
+/**
+ * The top level namespace, used to manipulate with events, creating and positioning containers on the canvas
+ * @class CanvasUI
+ */
 class CanvasUI {
     readonly canvas: HTMLCanvasElement
     readonly ctx: CanvasRenderingContext2D
@@ -61,6 +65,8 @@ class CanvasUI {
      * Adds a new parent to the array
      */
     add(container: Container): void {
+        container.init = this;
+
         this.containers.push(container);
         this.addListeners(container);
         this.resize();
