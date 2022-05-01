@@ -1,15 +1,15 @@
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { merge } = require("webpack-merge");
-const { commonConfig, generateName } = require("./webpack.common");
+const { commonConfig } = require("./webpack.common");
 
 const devConfig = {
     mode: "development",
     output: {
-        filename: () => "[name]." + generateName("js")
+        filename: "[name].[contenthash].js"
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: () => "[name]." + generateName("css")
+            filename: "[name].[contenthash].css"
         })
     ]
 };
