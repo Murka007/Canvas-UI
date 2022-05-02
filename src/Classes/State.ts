@@ -5,7 +5,14 @@
  * @class State
  */
 class State {
+    /**
+     * Current state
+     */
     current: boolean
+
+    /**
+     * Previous state
+     */
     previous: boolean
 
     constructor(value: boolean) {
@@ -13,6 +20,9 @@ class State {
         this.previous = value;
     }
 
+    /**
+     * @returns If state has changed and automatically changes it
+     */
     get updated(): boolean {
         if (this.previous !== this.current) {
             this.previous = this.current;
@@ -21,6 +31,9 @@ class State {
         return false;
     }
 
+    /**
+     * Updated current value
+     */
     update(value: boolean): void {
         this.current = value;
     }
