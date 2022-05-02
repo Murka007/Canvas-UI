@@ -1,5 +1,5 @@
-import { IDimensions, IPosition } from "../types"
-import { isNumber } from "../utils/Common"
+import { IDimensions, IImage, IPosition } from "../types"
+import { isFunction, isNumber } from "../utils/Common"
 import Container from "./Container"
 
 /**
@@ -18,14 +18,12 @@ class CanvasUI {
         readonly height: number
     }
 
+    private readonly mousedownContainers: Container[]
+    private readonly images: {[key: string]: HTMLImageElement}
     private readonly mouse: {
         x: number
         y: number
     }
-
-    private readonly mousedownContainers: Container[]
-
-    readonly images: {[key: string]: HTMLImageElement}
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -39,14 +37,13 @@ class CanvasUI {
             height: 1080
         };
 
+        this.mousedownContainers = [];
         this.images = {};
-
         this.mouse = {
             x: 0,
             y: 0
         };
 
-        this.mousedownContainers = [];
         this.load();
     }
 
@@ -89,27 +86,32 @@ class CanvasUI {
         this.resize();
     }
 
+    private has(container: Container): boolean {
+        return this.mousedownContainers.indexOf(container) >= 0;
+    }
+
     addListeners(container: Container): void {
-        if (container.mousedown) this.mousedownContainers.push(container);
+        if (container.mousedown && !this.has(container)) this.mousedownContainers.push(container);
+        if (container.click && !this.has(container)) this.mousedownContainers.push(container);
     }
 
     /**
      * @returns Image by src value, if the image does not exist, it creates a new one
      */
-    image(src: string): HTMLImageElement {
-        if (this.images[src] instanceof HTMLImageElement) {
-            return this.images[src];
+    image(img: IImage): HTMLImageElement {
+        if (this.images[img.src] instanceof HTMLImageElement) {
+            return this.images[img.src];
         }
 
-        const img = new Image();
-        img.src = src;
+        const newImg = new Image();
+        newImg.src = img.src;
 
         // Make sure to resize containers when image has loaded
-        img.onload = function() {
+        newImg.onload = function() {
             this.resize();
         }.bind(this);
-        this.images[src] = img;
-        return img;
+        this.images[img.src] = newImg;
+        return newImg;
     }
 
     /**
@@ -284,8 +286,10 @@ class CanvasUI {
             // Initial width and height should match image size
             if (parent.mergedStyles.image) {
                 const img = this.image(parent.mergedStyles.image);
-                parent.initial.width = img.width;
-                parent.initial.height = img.height;
+                const { x, y } = parent.getImageScale();
+                parent.initial.width = img.width * x;
+                parent.initial.height = img.height * y;
+                console.log(parent, parent.initial);
             }
 
             // Make sure to reset width and height of the container
@@ -381,7 +385,7 @@ class CanvasUI {
         }
         if (container.mousedown.remove) this.remove(container);
         const callback = container.mousedown.callback;
-        if (typeof callback === "function") callback(container);
+        if (isFunction(callback)) callback(container);
     }
 
     private handleClick(target: MouseEvent | Touch, container: Container): void {
@@ -393,7 +397,7 @@ class CanvasUI {
         container.clicked.update(!container.clicked.current);
         if (container.click.remove) this.remove(container);
         const callback = container.click.callback;
-        if (typeof callback === "function") callback(container);
+        if (isFunction(callback)) callback(container);
     }
 
     /**

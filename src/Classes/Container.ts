@@ -1,5 +1,5 @@
 import { IEvent, IPosition, IStyles, IText, Renderer } from "../types";
-import { deepCopy, merge, textMetrics } from "../utils/Common";
+import { deepCopy, isNumber, merge, textMetrics } from "../utils/Common";
 import CanvasUI from "./CanvasUI";
 import State from "./State";
 
@@ -32,10 +32,6 @@ class Container {
     hovering: State
     holding: State
     clicked: State
-
-    // hovering1: boolean
-    // holding1: boolean
-    // clicked1: boolean
 
     parent: Container
 
@@ -70,13 +66,6 @@ class Container {
         this.hovering = new State(false);
         this.holding = new State(false);
         this.clicked = new State(false);
-        // this.hovering = false;
-        // this.holding = false;
-        // this.clicked = false;
-        
-        // this.hovering1 = false;
-        // this.holding1 = false;
-        // this.clicked1 = false;
 
         this.parent = null;
 
@@ -124,8 +113,25 @@ class Container {
         this.init.ctx.fillRect(this.x1, this.y1, this.width, this.height);
     }
 
-    private drawImage(img: HTMLImageElement): void {
-        this.init.ctx.drawImage(img, this.x1, this.y1);
+    getImageScale(): IPosition {
+        const image = this.mergedStyles.image;
+        const img = this.init.image(image);
+        if (image.scaleTo) {
+            const { width, height } = image.scaleTo;
+            return {
+                x: width / img.width,
+                y: height / img.height
+            }
+        }
+
+        return {
+            x: 1,
+            y: 1
+        }
+    }
+    
+    private drawImage(img: HTMLImageElement, scale: IPosition): void {
+        this.init.ctx.drawImage(img, this.x1 / scale.x, this.y1 / scale.y);
     }
 
     /**
@@ -217,7 +223,6 @@ class Container {
      * Used to render current container, all added styles will be applied
      */
     render(): void {
-
         this.hovering.update(this.init.overlaps(this));
 
         if (this.hovering.current && this.hover && this.hover.remove) {
@@ -226,14 +231,19 @@ class Container {
         const styles = this.createStyles();
 
         this.init.ctx.save();
-        if (typeof styles.opacity === "number") {
+        if (isNumber(styles.opacity)) {
             this.init.ctx.globalAlpha = styles.opacity;
         }
 
         if (styles.fill) this.fill(styles.fill);
 
         if (styles.image) {
-            this.drawImage(this.init.image(styles.image));
+            const img = this.init.image(styles.image);
+            const scale = this.getImageScale(); 
+            this.init.ctx.save();
+            this.init.ctx.scale(scale.x, scale.y);
+            this.drawImage(img, scale);
+            this.init.ctx.restore();
         }
 
         if (styles.stroke) this.stroke(styles.stroke, styles.strokeWidth);

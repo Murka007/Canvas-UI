@@ -37,3 +37,7 @@ export function textMetrics(ctx: CanvasRenderingContext2D, text: string): { widt
 export function isNumber(value: any): boolean {
     return typeof value === "number";
 }
+
+export function isFunction(value: any): boolean {
+    return typeof value === "function";
+}

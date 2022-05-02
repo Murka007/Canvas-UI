@@ -49,9 +49,17 @@ export interface IText {
     position?: ITextPosition
 }
 
+export interface IImage {
+    src: string
+    scaleTo?: {
+        width: number
+        height: number
+    }
+}
+
 export interface IStyles {
 
-    image?: string
+    image?: IImage
     
     /**
      * The color that will be used to fill the container
