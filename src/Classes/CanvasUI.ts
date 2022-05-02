@@ -93,13 +93,18 @@ class CanvasUI {
         if (container.mousedown) this.mousedownContainers.push(container);
     }
 
+    /**
+     * @returns Image by src value, if the image does not exist, it creates a new one
+     */
     image(src: string): HTMLImageElement {
-        if (this.images[src]) {
+        if (this.images[src] instanceof HTMLImageElement) {
             return this.images[src];
         }
 
         const img = new Image();
         img.src = src;
+
+        // Make sure to resize containers when image has loaded
         img.onload = function() {
             this.resize();
         }.bind(this);
@@ -107,6 +112,9 @@ class CanvasUI {
         return img;
     }
 
+    /**
+     * @returns Current page dimensions
+     */
     private canvasDimensions(): IDimensions {
 
         // Original width and height
@@ -225,7 +233,7 @@ class CanvasUI {
     }
 
     /**
-     * Calculated alignment of the parent's children
+     * Calculates alignment of the parent's children
      */
     private calculateAlignment(parent: Container): void {
         const styles = parent.styles;
@@ -262,7 +270,7 @@ class CanvasUI {
     }
 
     /**
-     * Update position of all containers, all options will be applied to the containers
+     * Updates position of all containers, all options will be applied to the containers
      */
     private updatePosition(containers: Container[]): void {
 
@@ -336,7 +344,7 @@ class CanvasUI {
     }
 
     /**
-     * Returns the container that is under mouse cursor
+     * @returns The container that is under mouse cursor
      */
     private getContainer(containers: Container[], position: IPosition): Container {
 
