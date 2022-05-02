@@ -100,6 +100,9 @@ class CanvasUI {
 
         const img = new Image();
         img.src = src;
+        img.onload = function() {
+            this.resize();
+        }.bind(this);
         this.images[src] = img;
         return img;
     }
@@ -147,9 +150,9 @@ class CanvasUI {
         const len = parent.containers.length - 1;
         for (let i=0;i<len;i++) {
             const container = parent.containers[i];
-            const { marginRight, marginBottom } = container.styles;
-            if (isHor && marginRight) parent.width += marginRight;
-            if (isVert && marginBottom) parent.height += marginBottom;
+            const { margin } = container.styles;
+            if (isHor && margin) parent.width += margin;
+            if (isVert && margin) parent.height += margin;
         }
     }
 
@@ -252,9 +255,9 @@ class CanvasUI {
             current.y2 = current.y1 + (isVert ? current.height : 0);
 
             // Include margins to the next container position
-            const { marginRight, marginBottom } = current.styles;
-            if (isHor && marginRight) current.x2 += marginRight;
-            if (isVert && marginBottom) current.y2 += marginBottom;
+            const { margin } = current.styles;
+            if (isHor && margin) current.x2 += margin;
+            if (isVert && margin) current.y2 += margin;
         }
     }
 
@@ -268,6 +271,13 @@ class CanvasUI {
             // Recursively go through all containers
             if (parent.containers.length) {
                 this.updatePosition(parent.containers);
+            }
+
+            // Initial width and height should match image size
+            if (parent.mergedStyles.image) {
+                const img = this.image(parent.mergedStyles.image);
+                parent.initial.width = img.width;
+                parent.initial.height = img.height;
             }
 
             // Make sure to reset width and height of the container
@@ -356,7 +366,7 @@ class CanvasUI {
         const position = this.mousePosition(target);
         const container = this.getContainer(this.mousedownContainers, position);
         if (!container) return;
-        container.holding = true;
+        container.holding.update(true);
 
         if (target instanceof Touch) {
             container.touchIdentifier = target.identifier;
@@ -372,7 +382,7 @@ class CanvasUI {
         const position = this.mousePosition(target);
         if (!this.overlaps(container, position)) return;
 
-        container.clicked = !container.clicked;
+        container.clicked.update(!container.clicked.current);
         if (container.click.remove) this.remove(container);
         const callback = container.click.callback;
         if (typeof callback === "function") callback(container);
@@ -402,12 +412,12 @@ class CanvasUI {
                 for (const touch of event.changedTouches) {
                     if (container.touchIdentifier === touch.identifier || !isNumber(touch.identifier)) {
                         this.handleClick(touch, container);
-                        container.holding = false;
+                        container.holding.update(false);
                     }
                 }
             } else {
                 this.handleClick(event, container);
-                container.holding = false;
+                container.holding.update(false);
             }
         }
     }

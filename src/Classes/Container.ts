@@ -1,6 +1,7 @@
 import { IEvent, IPosition, IStyles, IText, Renderer } from "../types";
 import { deepCopy, merge, textMetrics } from "../utils/Common";
 import CanvasUI from "./CanvasUI";
+import State from "./State";
 
 let id = 0;
 
@@ -12,7 +13,7 @@ class Container {
     readonly id: number
     readonly containers: Container[]
     readonly styles: IStyles
-    oldStyles: IStyles
+    mergedStyles: IStyles
     init: CanvasUI
 
     offsetX: number
@@ -23,19 +24,18 @@ class Container {
     y2: number
     width: number
     height: number
-    image: string
 
     readonly hover: IEvent
     readonly mousedown: IEvent
     readonly click: IEvent
 
-    hovering: boolean
-    holding: boolean
-    clicked: boolean
+    hovering: State
+    holding: State
+    clicked: State
 
-    hovering1: boolean
-    holding1: boolean
-    clicked1: boolean
+    // hovering1: boolean
+    // holding1: boolean
+    // clicked1: boolean
 
     parent: Container
 
@@ -60,7 +60,6 @@ class Container {
         this.y2 = 0;
         this.width = 0;
         this.height = 0;
-        this.image = null;
 
         this.hover = null;
         this.mousedown = null;
@@ -68,17 +67,20 @@ class Container {
 
         Object.assign(this, renderer);
 
-        this.hovering = false;
-        this.holding = false;
-        this.clicked = false;
+        this.hovering = new State(false);
+        this.holding = new State(false);
+        this.clicked = new State(false);
+        // this.hovering = false;
+        // this.holding = false;
+        // this.clicked = false;
         
-        this.hovering1 = false;
-        this.holding1 = false;
-        this.clicked1 = false;
+        // this.hovering1 = false;
+        // this.holding1 = false;
+        // this.clicked1 = false;
 
         this.parent = null;
 
-        this.oldStyles = this.styles;
+        this.mergedStyles = this.styles;
 
         this.initial = {
             width: this.width,
@@ -147,18 +149,27 @@ class Container {
     private createStyles(): IStyles {
 
         // Check if state of one of the events has changed
-        if (this.hovering1 !== this.hovering || this.holding1 !== this.holding || this.clicked1 !== this.clicked) {
-            this.hovering1 = this.hovering;
-            this.holding1 = this.holding;
-            this.clicked1 = this.clicked;
-
+        if (this.hovering.updated || this.holding.updated || this.clicked.updated) {
             const styles: IStyles = deepCopy(this.styles);
-            if (this.hover && this.hover.styles && this.hovering) merge(styles, deepCopy(this.hover.styles));
-            if (this.mousedown && this.mousedown.styles && this.holding) merge(styles, deepCopy(this.mousedown.styles));
-            if (this.click && this.click.styles && this.clicked) merge(styles, deepCopy(this.click.styles));
-            this.oldStyles = styles;
+            if (this.hover && this.hover.styles && this.hovering.current) merge(styles, deepCopy(this.hover.styles));
+            if (this.mousedown && this.mousedown.styles && this.holding.current) merge(styles, deepCopy(this.mousedown.styles));
+            if (this.click && this.click.styles && this.clicked.current) merge(styles, deepCopy(this.click.styles));
+            this.mergedStyles = styles;
+            this.init.resize();
         }
-        return this.oldStyles;
+        return this.mergedStyles;
+        // if (this.hovering1 !== this.hovering || this.holding1 !== this.holding || this.clicked1 !== this.clicked) {
+        //     this.hovering1 = this.hovering;
+        //     this.holding1 = this.holding;
+        //     this.clicked1 = this.clicked;
+
+        //     const styles: IStyles = deepCopy(this.styles);
+        //     if (this.hover && this.hover.styles && this.hovering) merge(styles, deepCopy(this.hover.styles));
+        //     if (this.mousedown && this.mousedown.styles && this.holding) merge(styles, deepCopy(this.mousedown.styles));
+        //     if (this.click && this.click.styles && this.clicked) merge(styles, deepCopy(this.click.styles));
+        //     this.mergedStyles = styles;
+        // }
+        // return this.mergedStyles;
     }
 
     textMode(content: string): string {
@@ -217,9 +228,9 @@ class Container {
      */
     render(): void {
 
-        this.hovering = this.init.overlaps(this);
+        this.hovering.update(this.init.overlaps(this));
 
-        if (this.hovering && this.hover && this.hover.remove) {
+        if (this.hovering.current && this.hover && this.hover.remove) {
             this.init.remove(this);
         }
         const styles = this.createStyles();
@@ -231,8 +242,8 @@ class Container {
 
         if (styles.fill) this.fill(styles.fill);
 
-        if (this.image && this.id === 1) {
-            //this.drawImage(this.init.image(this.image));
+        if (styles.image) {
+            this.drawImage(this.init.image(styles.image));
         }
 
         if (styles.stroke) this.stroke(styles.stroke, styles.strokeWidth);

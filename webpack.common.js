@@ -12,7 +12,8 @@ const commonConfig = {
         mainfile: "./index.ts"
     },
     output: {
-        path: path.resolve(__dirname, "public")
+        path: path.resolve(__dirname, "public"),
+        assetModuleFilename: "img/[name][ext]"
     },
     devServer: {
         port: 3000,
@@ -36,7 +37,7 @@ const commonConfig = {
         new CleanWebpackPlugin()
     ],
     resolve: {
-        extensions: [".tsx", ".ts", ".js"]
+        extensions: [".tsx", ".ts", ".js", ".png"]
     },
     module: {
         rules: [
@@ -50,8 +51,8 @@ const commonConfig = {
                 use: [MiniCssExtractPlugin.loader, "css-loader"]
             },
             {
-                test: /\.(png|jpg|jpeg|gif)$/,
-                use: "file-loader"
+                test: /\.(png|jpe?g|gif|svg|eot|ttf|woff)$/,
+                type: "asset/resource"
             }
         ]
     }

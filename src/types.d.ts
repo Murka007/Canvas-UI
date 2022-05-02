@@ -51,6 +51,8 @@ export interface IText {
 
 export interface IStyles {
 
+    image?: string
+    
     /**
      * The color that will be used to fill the container
      */
@@ -85,8 +87,7 @@ export interface IStyles {
      */
     darken?: number
     cursor?: "pointer"
-    marginRight?: number
-    marginBottom?: number
+    margin?: number
 
     /**
      * Manage text of the container, add fill and stroke colors, adjust the position of the text relative to the container
@@ -144,7 +145,7 @@ export interface IEvent {
 
 export interface Renderer {
 
-    image?: string
+    // image?: string
 
     /**
      * The horizontal offset that will be applied after positioning the container
