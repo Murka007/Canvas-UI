@@ -25,6 +25,8 @@ class CanvasUI {
 
     private readonly mousedownContainers: Container[]
 
+    readonly images: {[key: string]: HTMLImageElement}
+
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.ctx = canvas.getContext("2d");
@@ -36,6 +38,8 @@ class CanvasUI {
             width: 1920,
             height: 1080
         };
+
+        this.images = {};
 
         this.mouse = {
             x: 0,
@@ -87,6 +91,17 @@ class CanvasUI {
 
     addListeners(container: Container): void {
         if (container.mousedown) this.mousedownContainers.push(container);
+    }
+
+    image(src: string): HTMLImageElement {
+        if (this.images[src]) {
+            return this.images[src];
+        }
+
+        const img = new Image();
+        img.src = src;
+        this.images[src] = img;
+        return img;
     }
 
     private canvasDimensions(): IDimensions {

@@ -23,6 +23,7 @@ class Container {
     y2: number
     width: number
     height: number
+    image: string
 
     readonly hover: IEvent
     readonly mousedown: IEvent
@@ -59,6 +60,7 @@ class Container {
         this.y2 = 0;
         this.width = 0;
         this.height = 0;
+        this.image = null;
 
         this.hover = null;
         this.mousedown = null;
@@ -118,6 +120,10 @@ class Container {
     private fill(color: string): void {
         this.init.ctx.fillStyle = color;
         this.init.ctx.fillRect(this.x1, this.y1, this.width, this.height);
+    }
+
+    private drawImage(img: HTMLImageElement): void {
+        this.init.ctx.drawImage(img, this.x1, this.y1);
     }
 
     /**
@@ -224,6 +230,11 @@ class Container {
         }
 
         if (styles.fill) this.fill(styles.fill);
+
+        if (this.image && this.id === 1) {
+            //this.drawImage(this.init.image(this.image));
+        }
+
         if (styles.stroke) this.stroke(styles.stroke, styles.strokeWidth);
 
         if (styles.darken) {

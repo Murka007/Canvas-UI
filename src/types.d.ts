@@ -144,6 +144,8 @@ export interface IEvent {
 
 export interface Renderer {
 
+    image?: string
+
     /**
      * The horizontal offset that will be applied after positioning the container
      */

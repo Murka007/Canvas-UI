@@ -1,5 +1,6 @@
 /node_modules
 /public
 /src/styles
+/src/img
 index.html
 index.ts

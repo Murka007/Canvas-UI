@@ -48,6 +48,10 @@ const commonConfig = {
             {
                 test: /\.css$/,
                 use: [MiniCssExtractPlugin.loader, "css-loader"]
+            },
+            {
+                test: /\.(png|jpg|jpeg|gif)$/,
+                use: "file-loader"
             }
         ]
     }
