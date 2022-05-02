@@ -155,21 +155,11 @@ class Container {
             if (this.mousedown && this.mousedown.styles && this.holding.current) merge(styles, deepCopy(this.mousedown.styles));
             if (this.click && this.click.styles && this.clicked.current) merge(styles, deepCopy(this.click.styles));
             this.mergedStyles = styles;
+
+            // Automatically resize when state changes
             this.init.resize();
         }
         return this.mergedStyles;
-        // if (this.hovering1 !== this.hovering || this.holding1 !== this.holding || this.clicked1 !== this.clicked) {
-        //     this.hovering1 = this.hovering;
-        //     this.holding1 = this.holding;
-        //     this.clicked1 = this.clicked;
-
-        //     const styles: IStyles = deepCopy(this.styles);
-        //     if (this.hover && this.hover.styles && this.hovering) merge(styles, deepCopy(this.hover.styles));
-        //     if (this.mousedown && this.mousedown.styles && this.holding) merge(styles, deepCopy(this.mousedown.styles));
-        //     if (this.click && this.click.styles && this.clicked) merge(styles, deepCopy(this.click.styles));
-        //     this.mergedStyles = styles;
-        // }
-        // return this.mergedStyles;
     }
 
     textMode(content: string): string {
@@ -178,7 +168,7 @@ class Container {
     }
 
     /**
-     * Returns current text position relative to the container
+     * @returns Current text position relative to the container
      */
     private textPosition(text: IText, content: string): IPosition {
         if (!text.position) return { x: this.position.x1, y: this.position.y1 };
@@ -271,7 +261,7 @@ class Container {
             }
         }
 
-        if ((this.hovering || this.holding) && styles.cursor === "pointer") {
+        if ((this.hovering.current || this.holding.current) && styles.cursor === "pointer") {
             this.init.canvas.style.cursor = "pointer";
         }
 

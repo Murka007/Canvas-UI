@@ -32,7 +32,7 @@ class State {
     }
 
     /**
-     * Updated current value
+     * Updates current value
      */
     update(value: boolean): void {
         this.current = value;
