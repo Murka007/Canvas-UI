@@ -1,17 +1,21 @@
-# Canvas-UI
-Typescript library that allows to build user interfaces on canvas
+# Canvas-UI-TS
+> Typescript library that allows to build user interfaces on canvas
 
+### Install
+
+You can install [npm](https://www.npmjs.com/package/canvas-ui-ts) package using:
+
+    npm install canvas-ui-ts
+    
 ### Usage
 ```
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 const UI = new CanvasUI(canvas);
 
-const parent1 = new Container({
+const parent = new Container({
     offsetY: -15,
     styles: {
         align: "horizontal",
-        strokeWidth: 5,
-        stroke: "orange",
         position: {
             horizontal: {
                 align: "middle",
@@ -30,59 +34,42 @@ function generateContainer() {
         width: 200,
         height: 200,
         styles: {
-            fill: "#ff4086",
-            stroke: "#000",
-            marginRight: 50,
-            marginBottom: 50,
-            opacity: 0.1,
-
-            text: {
-                content: "ID",
-                font: "bold 40px Arial",
-                fill: "white",
-                strokeWidth: 2,
-                stroke: "#000",
-        
-                position: {
-                    horizontal: "middle",
-                    vertical: "middle"
-                }
-            }
+            margin: 20,
+            fill: "#4fb9ff",
+            strokeWidth: 10,
+            stroke: "#3c99d6",
         },
+
         hover: {
             styles: {
                 cursor: "pointer",
-                text: {
-                    content: "Hovering"
-                }
+                fill: "#4daceb",
+                stroke: "#3587bd"
             }
         },
+
         mousedown: {
             styles: {
-                darken: 0.1,
-                text: {
-                    content: "Hovering",
-                    fill: "red"
-                }
+                cursor: "pointer",
+                strokeWidth: 20,
+                darken: 0.1
             }
         },
+
         click: {
-            remove: true,
             callback(container) {
-                console.log(container);
+                console.log("Clicked on", container);
             }
         }
     })
 }
 
-window.addEventListener("mouseup", function(e) {
-    if (e.button === 2) parent1.add(generateContainer());
-})
+// Add parent to the UI first
+UI.add(parent);
 
-UI.add(parent1);
-parent1.add(generateContainer());
-parent1.add(generateContainer());
-parent1.add(generateContainer());
+// Then add children to the parent
+parent.add(generateContainer());
+parent.add(generateContainer());
 
 function loop(): void {
     window.requestAnimationFrame(loop);
