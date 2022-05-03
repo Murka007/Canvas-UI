@@ -8,7 +8,7 @@ You can install [npm](https://www.npmjs.com/package/canvas-ui-ts) package using:
     npm install canvas-ui-ts
     
 ### Usage
-```
+```typescript
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 const UI = new CanvasUI(canvas);
 
