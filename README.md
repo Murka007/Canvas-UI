@@ -3,7 +3,7 @@
 
 ### Install
 
-You can install package [npm](https://www.npmjs.com/package/canvas-ui-ts) using:
+You can install [npm](https://www.npmjs.com/package/canvas-ui-ts) package using:
 
     npm install canvas-ui-ts
     
