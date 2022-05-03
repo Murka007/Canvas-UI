@@ -50,7 +50,33 @@ export interface IText {
 }
 
 export interface IImage {
+
+    /**
+     * Link to the image
+     */
     src: string
+
+    /**
+     * Scale that will be applied on image
+     */
+    scale?: {
+
+        /**
+         * Scaling factor in the horizontal direction
+         */
+        x: number
+
+        /**
+         * Scaling factor in the vertical direction
+         */
+        y: number
+    }
+
+    /**
+     * Image will be resized to the current width and height.
+     * 
+     * Has priority over scale
+     */
     scaleTo?: {
         width: number
         height: number
@@ -59,6 +85,9 @@ export interface IImage {
 
 export interface IStyles {
 
+    /**
+     * Object that contains other properties to manipulate with the image
+     */
     image?: IImage
     
     /**

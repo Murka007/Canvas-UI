@@ -289,7 +289,6 @@ class CanvasUI {
                 const { x, y } = parent.getImageScale();
                 parent.initial.width = img.width * x;
                 parent.initial.height = img.height * y;
-                console.log(parent, parent.initial);
             }
 
             // Make sure to reset width and height of the container
@@ -383,13 +382,16 @@ class CanvasUI {
         if (target instanceof Touch) {
             container.touchIdentifier = target.identifier;
         }
+        if (!container.mousedown) return;
+
         if (container.mousedown.remove) this.remove(container);
         const callback = container.mousedown.callback;
         if (isFunction(callback)) callback(container);
     }
 
     private handleClick(target: MouseEvent | Touch, container: Container): void {
-        if (!(container.click && container.holding)) return;
+        if (!container.holding.current) return;
+        if (!container.click) return;
 
         const position = this.mousePosition(target);
         if (!this.overlaps(container, position)) return;

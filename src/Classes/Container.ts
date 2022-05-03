@@ -113,25 +113,41 @@ class Container {
         this.init.ctx.fillRect(this.x1, this.y1, this.width, this.height);
     }
 
+    /**
+     * @returns Scaling factor of the image based on given options 
+     */
     getImageScale(): IPosition {
         const image = this.mergedStyles.image;
         const img = this.init.image(image);
-        if (image.scaleTo) {
-            const { width, height } = image.scaleTo;
-            return {
-                x: width / img.width,
-                y: height / img.height
-            }
-        }
-
-        return {
+        const scale: IPosition = {
             x: 1,
             y: 1
+        };
+
+        if (image.scale) {
+            const { x, y } = image.scale;
+            scale.x *= x;
+            scale.y *= y;
         }
+
+        if (image.scaleTo) {
+            const { width, height } = image.scaleTo;
+            scale.x = width / img.width;
+            scale.y = height / img.height;
+        }
+
+        return scale;
     }
     
-    private drawImage(img: HTMLImageElement, scale: IPosition): void {
-        this.init.ctx.drawImage(img, this.x1 / scale.x, this.y1 / scale.y);
+    /**
+     * Draws a given image in initial position
+     */
+    private drawImage(img: HTMLImageElement): void {
+        const { x, y } = this.getImageScale();
+        this.init.ctx.save();
+        this.init.ctx.scale(x, y);
+        this.init.ctx.drawImage(img, this.x1 / x, this.y1 / y);
+        this.init.ctx.restore();
     }
 
     /**
@@ -157,9 +173,14 @@ class Container {
         // Check if state of one of the events has changed
         if (this.hovering.updated || this.holding.updated || this.clicked.updated) {
             const styles: IStyles = deepCopy(this.styles);
-            if (this.hover && this.hover.styles && this.hovering.current) merge(styles, deepCopy(this.hover.styles));
-            if (this.mousedown && this.mousedown.styles && this.holding.current) merge(styles, deepCopy(this.mousedown.styles));
-            if (this.click && this.click.styles && this.clicked.current) merge(styles, deepCopy(this.click.styles));
+
+            const hover = this.hover && this.hover.styles;
+            const mousedown = this.mousedown && this.mousedown.styles;
+            const click = this.click && this.click.styles;
+
+            if (this.hovering.current && hover) merge(styles, deepCopy(hover));
+            if (this.holding.current && mousedown) merge(styles, deepCopy(mousedown));
+            if (this.clicked.current && click) merge(styles, deepCopy(click));
             this.mergedStyles = styles;
 
             // Automatically resize when state changes
@@ -223,9 +244,9 @@ class Container {
      * Used to render current container, all added styles will be applied
      */
     render(): void {
-        this.hovering.update(this.init.overlaps(this));
+        this.hovering.update(this.hover && this.init.overlaps(this));
 
-        if (this.hovering.current && this.hover && this.hover.remove) {
+        if (this.hovering.current && this.hover.remove) {
             this.init.remove(this);
         }
         const styles = this.createStyles();
@@ -239,11 +260,7 @@ class Container {
 
         if (styles.image) {
             const img = this.init.image(styles.image);
-            const scale = this.getImageScale(); 
-            this.init.ctx.save();
-            this.init.ctx.scale(scale.x, scale.y);
-            this.drawImage(img, scale);
-            this.init.ctx.restore();
+            this.drawImage(img);
         }
 
         if (styles.stroke) this.stroke(styles.stroke, styles.strokeWidth);
