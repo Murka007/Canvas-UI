@@ -9,11 +9,15 @@ const commonConfig = {
     target: ["web", "es5"],
     context: path.resolve(__dirname, "src"),
     entry: {
-        mainfile: "./index.ts"
+        main: "./index.ts"
     },
     output: {
         path: path.resolve(__dirname, "public"),
-        assetModuleFilename: "img/[name][ext]"
+        assetModuleFilename: "img/[name][ext]",
+        library: {
+            name: "canvas-ui-ts",
+            type: "umd"
+        }
     },
     devServer: {
         port: 3000,
@@ -29,6 +33,9 @@ const commonConfig = {
             new Terser()
         ]
     },
+    externals: [
+        /^canvas\-ui\-ts\/.+$/,
+    ],
     plugins: [
         new HTMLWebpackPlugin({
             template: "./index.html",
