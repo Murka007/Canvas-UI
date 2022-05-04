@@ -5,6 +5,7 @@
   "main": "./src/index.ts",
   "module": "./src/index.ts",
   "types": "./index.d.ts",
+  "type": "module",
   "scripts": {
     "dev": "webpack --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
