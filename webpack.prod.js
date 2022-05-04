@@ -5,11 +5,11 @@ const { commonConfig } = require("./webpack.common");
 const prodConfig = {
     mode: "production",
     output: {
-        filename: "[contenthash].js"
+        filename: "[name].js"
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: "[contenthash].css"
+            filename: "[name].css"
         })
     ]
 };

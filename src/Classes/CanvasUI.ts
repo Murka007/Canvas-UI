@@ -1,4 +1,4 @@
-import { IDimensions, IImage, IPosition } from "../types"
+import { IDimensions, IImage, IPosition } from "../types";
 import { isFunction, isNumber } from "../utils/Common"
 import Container from "./Container"
 

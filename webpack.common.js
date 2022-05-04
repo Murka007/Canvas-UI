@@ -7,7 +7,7 @@ const Terser = require("terser-webpack-plugin");
 
 const commonConfig = {
     target: ["web", "es5"],
-    context: path.resolve(__dirname, "src"),
+    context: path.resolve(__dirname, "test"),
     entry: {
         main: "./index.ts"
     },
@@ -34,7 +34,7 @@ const commonConfig = {
         ]
     },
     externals: [
-        /^canvas\-ui\-ts\/.+$/,
+        /^canvas-ui-ts\/.+$/,
     ],
     plugins: [
         new HTMLWebpackPlugin({

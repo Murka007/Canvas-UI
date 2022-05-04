@@ -1,5 +1,4 @@
-import Container from "./Classes/Container"
-
+import Container from "./Classes/Container";
 type Horizontal = "left" | "middle" | "right"
 type Vertical = "top" | "middle" | "bottom"
 

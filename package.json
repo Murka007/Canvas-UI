@@ -2,7 +2,8 @@
   "name": "canvas-ui-ts",
   "version": "1.0.3",
   "description": "Typescript library that allows to build user interfaces on canvas",
-  "main": "index.ts",
+  "main": "./src/index.ts",
+  "types": "./index.d.ts",
   "scripts": {
     "dev": "webpack --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
@@ -34,7 +35,6 @@
     "webpack-dev-server": "^4.8.1",
     "webpack-merge": "^5.8.0"
   },
-  "types": "./index.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Murka007/Canvas-UI.git"
