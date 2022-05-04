@@ -1,6 +1,6 @@
 {
   "name": "canvas-ui-ts",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "Typescript library that allows to build user interfaces on canvas",
   "main": "./src/index.ts",
   "types": "./index.d.ts",
