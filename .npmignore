@@ -1,6 +1,6 @@
 *
 
-/lib
-package-lock.json
-package.json
-README.md
+!/lib
+!package-lock.json
+!package.json
+!README.md
