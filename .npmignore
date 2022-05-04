@@ -1,3 +1,6 @@
-.gitignore
-/public
-/test
+*
+
+/lib
+package-lock.json
+package.json
+README.md

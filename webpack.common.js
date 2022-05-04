@@ -9,7 +9,7 @@ const commonConfig = {
     target: ["web", "es5"],
     context: path.resolve(__dirname, "test"),
     entry: {
-        main: "./index.ts"
+        index: "./index.ts"
     },
     output: {
         path: path.resolve(__dirname, "public"),
