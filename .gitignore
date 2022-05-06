@@ -1,3 +1,4 @@
+# exclude only this folders
 /node_modules
 /lib
 /public

@@ -3,9 +3,12 @@
     "module": "commonjs",
     "target": "es2015",
     "declaration": true,
-    "outDir": "./lib"
+    "outDir": "lib"
   },
   "include": [
-    "src/**/*"
-  ]
+    "src/**/*",
+    "test",
+    "index.d.ts"
+  ],
+  "exclude": ["node_modules"]
 }

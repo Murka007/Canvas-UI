@@ -13,17 +13,13 @@ const commonConfig = {
     },
     output: {
         path: path.resolve(__dirname, "public"),
-        assetModuleFilename: "img/[name][ext]",
-        library: {
-            name: "canvas-ui-ts",
-            type: "umd"
-        }
+        assetModuleFilename: "img/[name][ext]"
     },
     devServer: {
         port: 3000,
         hot: true,
         static: {
-            directory: "./src/styles"
+            directory: "./test/styles"
         }
     },
     optimization: {
@@ -33,9 +29,6 @@ const commonConfig = {
             new Terser()
         ]
     },
-    externals: [
-        /^canvas-ui-ts\/.+$/,
-    ],
     plugins: [
         new HTMLWebpackPlugin({
             template: "./index.html",
@@ -44,7 +37,7 @@ const commonConfig = {
         new CleanWebpackPlugin()
     ],
     resolve: {
-        extensions: [".tsx", ".ts", ".js", ".png"]
+        extensions: [".tsx", ".ts", ".jsx", ".js", ".png"]
     },
     module: {
         rules: [

@@ -1,5 +1,6 @@
 *
 
+# include only this folders
 !/lib
 !package-lock.json
 !package.json
